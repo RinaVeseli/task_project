@@ -22,6 +22,9 @@ export class User extends AuditEntity {
   firstName: string;
 
   @Column({ nullable: true })
+  middle_name: string;
+
+  @Column({ nullable: true })
   lastName: string;
 
   @Column({ unique: true })
@@ -52,4 +55,16 @@ export class User extends AuditEntity {
 
   @Column({ nullable: true })
   timezone: string;
+
+  @Column({ nullable: true })
+  isVerified: boolean;
+  @Column({ type:"date",  nullable: true })
+  birthdate: Date;
+
+  @Column({ nullable: true })
+  status: boolean;
+
+  @Column({ nullable: true })
+  avatar: string;
+
 }

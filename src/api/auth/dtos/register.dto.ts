@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
+  IsDate,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -20,6 +22,10 @@ export class RegisterDTO {
   @IsString()
   @ApiProperty()
   firstName: string;
+
+  @IsString()
+  @ApiProperty()
+  middle_name: string;
 
   @IsString()
   @ApiProperty()
@@ -64,6 +70,24 @@ export class RegisterDTO {
   @IsOptional()
   @ApiProperty()
   timezone: string;
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty()
+  isVerified: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty()
+  status: boolean;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  avatar: string;
+  // @IsDate()
+  // @IsOptional()
+  // @ApiProperty()
+  // birthdate: Date;
 
   @IsEnum(UserRoles)
   @ApiProperty()

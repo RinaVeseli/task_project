@@ -51,6 +51,7 @@ describe('AuthService', () => {
     it('should return tokens if signup is successful', async () => {
       const user: RegisterDTO = {
         firstName: 'Test',
+        middle_name:"TestMiddle",
         lastName: 'User',
         email: 'test@test.com',
         username: 'testuser',
@@ -59,6 +60,10 @@ describe('AuthService', () => {
         gender: UserGender.MALE,
         phone: '',
         timezone: '',
+        isVerified: true,
+        status:true,
+        avatar:"photo",
+        // birthdate:new Date('2023-02-03'),
         role: UserRoles.USER,
       };
 
@@ -78,6 +83,7 @@ describe('AuthService', () => {
     it('should throw HttpException if signup fails', async () => {
       const user: RegisterDTO = {
         firstName: 'Test',
+        middle_name:'TestMiddle',
         lastName: 'User',
         email: 'test@test.com',
         username: 'testuser',
@@ -86,6 +92,10 @@ describe('AuthService', () => {
         gender: UserGender.MALE,
         phone: '',
         timezone: '',
+        isVerified: true,
+        status:true,
+        avatar:"photo",
+        // birthdate:new Date('2023-02-03'),
         role: UserRoles.USER,
       };
 

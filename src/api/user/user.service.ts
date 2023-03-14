@@ -10,11 +10,11 @@ import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { PasswordReset } from './entities/reset-password.entity';
 import { hashDataBrypt } from '../../services/providers';
 import { randomBytes } from 'crypto';
-import { UserRepository } from './repository/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InjectEventEmitter } from 'nest-emitter';
 import EventEmitter from 'events';
+import { UserRepository } from './repository/user.repository';
 
 @Injectable()
 export class UserService implements IUserService {

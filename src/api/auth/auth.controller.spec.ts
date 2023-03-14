@@ -38,8 +38,12 @@ describe('AuthController', () => {
 
       const registerDto = new RegisterDTO();
       registerDto.firstName = 'First Name';
+      registerDto.middle_name="Middle Name",
       registerDto.lastName = 'Last Name';
       registerDto.username = 'username';
+      registerDto.isVerified=true,
+      registerDto.status=true,
+      registerDto.avatar="avatar",
       registerDto.email = 'email';
       registerDto.password = 'password';
       registerDto.passwordConfirm = 'password';

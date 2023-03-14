@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'stream';
 import { InjectEventEmitter } from 'nest-emitter';
 import { MailService } from './services/mail/mail.service';
+import { Public } from './common/decorators/public.decorator';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -10,6 +11,7 @@ export class AppService implements OnModuleInit {
     private readonly mailService: MailService,
   ) {}
 
+  @Public()
   getHello(): string {
     return 'Hello World!';
   }

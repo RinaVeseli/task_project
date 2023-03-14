@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { Project } from 'src/api/project/entities/project.entity';
 import { PasswordReset } from 'src/api/user/entities/reset-password.entity';
 import { User } from 'src/api/user/entities/user.entity';
 
@@ -12,7 +13,7 @@ export const config = {
   database: process.env.TYPEORM_NAME,
   synchronize: true,
   dropSchema: false,
-  entities: [User, PasswordReset],
+  entities: [User, PasswordReset, Project],
   migrations: [process.env.TYPEORM_MIGRATIONS],
   logging: process.env.NODE_ENV === 'localhost',
   seeds: [User],

@@ -5,7 +5,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { IUserService } from './interfaces/user.service.interface';
 import { PermissinDto } from './dtos/permission.dto';
-import { UnprocessableEntityException } from '@nestjs/common/exceptions';
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common/exceptions';
 import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { PasswordReset } from './entities/reset-password.entity';
 import { hashDataBrypt } from '../../services/providers';
@@ -15,6 +15,7 @@ import { Repository } from 'typeorm';
 import { InjectEventEmitter } from 'nest-emitter';
 import EventEmitter from 'events';
 import { UserRepository } from './repository/user.repository';
+// import { UserProject } from './entities/user_project.entity';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -23,6 +24,8 @@ export class UserService implements IUserService {
     @InjectRepository(PasswordReset)
     private passwordRepository: Repository<PasswordReset>,
     @InjectEventEmitter() private readonly emitter: EventEmitter,
+    // @InjectRepository(UserProject)
+    // private readonly studentCourseRepository: Repository<UserProject>
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -30,7 +33,14 @@ export class UserService implements IUserService {
       this.userRepository.create(createUserDto),
     );
   }
-
+  // async createStudentCourse(createStudentCourse: {userId: number, projectId: number}): Promise<void> {
+  //   const student = await this.userRepository.findOne({where: {id: createStudentCourse.userId}});
+  //   if(!student){
+  //   throw new NotFoundException()
+  //   }
+    
+  //   await this.studentCourseRepository.save(createStudentCourse)
+  // }
   async findOne(userId: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ uuid: userId });
     if (!user) {

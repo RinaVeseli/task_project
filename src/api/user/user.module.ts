@@ -5,6 +5,7 @@ import { CustomRepositoryModule } from '../../common/db/CustomRepository.module'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PasswordReset } from './entities/reset-password.entity';
 import { UserRepository } from './repository/user.repository';
+// import { UserProject } from './entities/user_project.entity';
 
 @Module({
   imports: [

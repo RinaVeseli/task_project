@@ -28,13 +28,15 @@ import { UserRoles } from './enums/roles.enum';
 import { PaginationInterceptor } from '../../common/interceptors/pagination.interceptor';
 import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { Public } from '../../common/decorators/public.decorator';
+// import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('user')
 @ApiBearerAuth()
 @ApiTags('User')
 @UsePipes(new ValidationPipe())
+
 @UseInterceptors(ClassSerializerInterceptor)
-// @UseGuards(PermissionsGuard) 
+// @UseGuards(RolesGuard)
  @Public()
 export class UserController implements IUserController {
   constructor(private readonly usersService: UserService) {}
@@ -53,7 +55,7 @@ export class UserController implements IUserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
-
+ 
   @Get('me')
   async getMe(@GetCurrentUser() user: User): Promise<User> {
     return await this.usersService.findOne(user.uuid);
@@ -65,6 +67,7 @@ export class UserController implements IUserController {
   async findOne(@Param('userId') userId: string): Promise<User> {
     return await this.usersService.findOne(userId);
   }
+
 
   @Roles(UserRoles.ADMIN)
   @Get()

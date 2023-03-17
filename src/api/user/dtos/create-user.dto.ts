@@ -8,6 +8,8 @@ import {
   IsString,
   Validate,
 } from 'class-validator';
+import { Project } from 'src/api/project/entities/project.entity';
+import { JoinTable, ManyToMany } from 'typeorm';
 import { IsUnique } from '../../../common/decorators/validation.decorator';
 import { User } from '../entities/user.entity';
 import { UserRoles } from '../enums/roles.enum';
@@ -76,4 +78,20 @@ export class CreateUserDto {
   @IsEnum(UserRoles)
   @ApiProperty()
   role: number;
+
+  // @ManyToMany(
+  //   ()=>Project, project=>project.users,{onDelete:'NO ACTION', onUpdate:'NO ACTION'}
+  // )
+  //   @JoinTable({
+  //   name: 'user_project',
+  //   joinColumn: {
+  //     name: 'user_id',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'project_id',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
+  // projects?:Project[]; 
 }

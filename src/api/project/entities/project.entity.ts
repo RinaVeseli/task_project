@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, Index } from 'typeorm';
+import { User } from 'src/api/user/entities/user.entity';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { AuditEntity } from '../../../common/db/customBaseEntites/AuditEntity';
 import { Type } from '../enums/type.enum';
 
@@ -15,5 +16,16 @@ export class Project extends AuditEntity {
   @Column({ type: 'enum', nullable:false, enum: Type, default:Type.OTHER })
   type: Type;
 
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  users: User[];
+  
+  // @ManyToMany(
+  //   ()=>User, user=>user.projects,
+  //   {onDelete: 'NO ACTION', onUpdate:'NO ACTION'},
+
+  // )
+  // users: User[];
 
 }

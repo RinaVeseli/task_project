@@ -1,14 +1,15 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { UserGender } from '../enums/userGender.enum';
 import { UserRoles } from '../enums/roles.enum';
 import { AuditEntity } from '../../../common/db/customBaseEntites/AuditEntity';
+import { Project } from 'src/api/project/entities/project.entity';
 
 @Entity('users')
 export class User extends AuditEntity {
   @Column({
     type: 'enum',
-    default: UserRoles.USER,
+    default: UserRoles.ADMIN,
     enum: UserRoles,
   })
   role: UserRoles;
@@ -67,4 +68,20 @@ export class User extends AuditEntity {
   @Column({ nullable: true })
   avatar: string;
 
+  
+  // @ManyToMany(
+  //   ()=>Project, project=>project.users,{onDelete:'NO ACTION', onUpdate:'NO ACTION'}
+  // )
+  //   @JoinTable({
+  //   name: 'user_project',
+  //   joinColumn: {
+  //     name: 'user_id',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'project_id',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
+  // projects?:Project[]; 
 }

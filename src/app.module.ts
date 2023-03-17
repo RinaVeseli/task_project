@@ -16,6 +16,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ProjectModule } from './api/project/project.module';
 import { ProjectController } from './api/project/project.controller';
+import { ProjectService } from './api/project/project.service';
+import { User } from './api/user/entities/user.entity';
+import { Project } from './api/project/entities/project.entity';
+import { RoleModule } from './api/role/role.module';
 
 @Module({
   imports: [
@@ -43,12 +47,14 @@ import { ProjectController } from './api/project/project.controller';
         },
       },
     }),
+    TypeOrmModule.forFeature([User, Project]),
     NestEmitterModule.forRoot(new EventEmitter()),
     AuthModule,
     UserModule,
     ProjectModule,
+    RoleModule,
   ],
-  controllers: [AppController, ProjectController],
+  controllers: [AppController],
   providers: [
     { provide: APP_GUARD, useClass: AtGuard },
     AppService,

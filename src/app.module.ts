@@ -20,6 +20,8 @@ import { ProjectService } from './api/project/project.service';
 import { User } from './api/user/entities/user.entity';
 import { Project } from './api/project/entities/project.entity';
 import { RoleModule } from './api/role/role.module';
+import { ReportsController } from './api/reports/controller/reports.controller';
+import { ReportsModule } from './api/reports/reports.module';
 
 @Module({
   imports: [
@@ -53,6 +55,7 @@ import { RoleModule } from './api/role/role.module';
     UserModule,
     ProjectModule,
     RoleModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

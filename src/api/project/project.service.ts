@@ -24,6 +24,9 @@ export class ProjectService implements IProjectService {
       updateProjectDto,
     );
   }
+  async addUserToProject(projectId: string, userId: string): Promise<void> {
+    return await this.projectRepository.addUserToProject(projectId, userId);
+  }
   async remove(projectId: string): Promise<void> {
     await this.projectRepository.removeProject(projectId);
   }

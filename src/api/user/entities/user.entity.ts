@@ -1,9 +1,18 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { UserGender } from '../enums/userGender.enum';
 import { UserRoles } from '../enums/roles.enum';
 import { AuditEntity } from '../../../common/db/customBaseEntites/AuditEntity';
 import { Project } from 'src/api/project/entities/project.entity';
+import { Reports } from 'src/api/reports/entities/report.entity';
 
 @Entity('users')
 export class User extends AuditEntity {
@@ -59,7 +68,7 @@ export class User extends AuditEntity {
 
   @Column({ nullable: true })
   isVerified: boolean;
-  @Column({ type:"date",  nullable: true })
+  @Column({ type: 'date', nullable: true })
   birthdate: Date;
 
   @Column({ nullable: true })
@@ -68,7 +77,9 @@ export class User extends AuditEntity {
   @Column({ nullable: true })
   avatar: string;
 
-  
+  @OneToMany(() => Reports, (report) => report.user)
+  reports: Reports[];
+
   // @ManyToMany(
   //   ()=>Project, project=>project.users,{onDelete:'NO ACTION', onUpdate:'NO ACTION'}
   // )
@@ -83,5 +94,5 @@ export class User extends AuditEntity {
   //     referencedColumnName: 'id',
   //   },
   // })
-  // projects?:Project[]; 
+  // projects?:Project[];
 }

@@ -6,12 +6,8 @@ import { ProjectRepository } from './repository/project.repository';
 import { ProjectService } from './project.service';
 
 @Module({
-    imports:[
-        CustomRepositoryModule.forCustomRepository([ProjectRepository])
-    ],
-    controllers: [ProjectController],
+  imports: [CustomRepositoryModule.forCustomRepository([ProjectRepository])],
+  controllers: [ProjectController],
   providers: [ProjectService],
 })
-
-export class ProjectModule {
-}
+export class ProjectModule {}

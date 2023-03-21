@@ -16,6 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRoles } from '../user/enums/roles.enum';
+import { UserService } from '../user/user.service';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './entities/project.entity';
@@ -36,6 +37,7 @@ export class ProjectController implements IProjectController {
   async create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
     return await this.projectService.create(createProjectDto);
   }
+
   @Get(':projectId')
   async findOne(@Param('projectId') projectId: string): Promise<Project> {
     return await this.projectService.findOne(projectId);
@@ -44,6 +46,15 @@ export class ProjectController implements IProjectController {
   async findAll(): Promise<Project[]> {
     return await this.projectService.findAll();
   }
+  @Public()
+  @Post(':id/users/:userId')
+  async addUserToProject(
+    @Param('id') projectId: string,
+    @Param('userId') userId: string,
+  ): Promise<void> {
+    return await this.projectService.addUserToProject(projectId, userId);
+  }
+
   @Patch(':projectId')
   async updateProject(
     @Param('projectId') projectId: string,
@@ -55,7 +66,19 @@ export class ProjectController implements IProjectController {
   async remove(@Param('projectId') projectId: string): Promise<void> {
     return await this.projectService.remove(projectId);
   }
+  // @Post(':projectId/users/:userId')
+  // async addUserToProject(
+  //   @Param('projectId') projectId: string,
+  //   @Param('userId') userId: string,
+  // ): Promise<Project> {
+  //   const project = await this.projectService.findOne(projectId);
+  //   const user = await this.userService.findOne(userId);
 
+  //   project.users.push(user);
+  //   await this.projectService.create(project);
+
+  //   return project;
+  // }
   // @Get()
 
   // async getUsers(){

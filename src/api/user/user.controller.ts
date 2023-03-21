@@ -28,24 +28,28 @@ import { UserRoles } from './enums/roles.enum';
 import { PaginationInterceptor } from '../../common/interceptors/pagination.interceptor';
 import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { Public } from '../../common/decorators/public.decorator';
+import { ReportsService } from '../reports/services/reports.service';
+import { CreateReportDTO } from '../reports/dtos/create_report.dto';
+import { Reports } from '../reports/entities/report.entity';
 // import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('user')
 @ApiBearerAuth()
 @ApiTags('User')
 @UsePipes(new ValidationPipe())
-
 @UseInterceptors(ClassSerializerInterceptor)
 // @UseGuards(RolesGuard)
- @Public()
+@Public()
 export class UserController implements IUserController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(
+    private readonly usersService: UserService,
+    private readonly reportService: ReportsService,
+  ) {}
 
   //example how permissions work
   // @Permission(UserPermissions.CAN_ACCESS_HELLO_METHOD)
   @Public()
   @Get('hello')
-
   async getHello() {
     return `Hello from Hello Method`;
   }
@@ -55,7 +59,7 @@ export class UserController implements IUserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
- 
+
   @Get('me')
   async getMe(@GetCurrentUser() user: User): Promise<User> {
     return await this.usersService.findOne(user.uuid);
@@ -67,7 +71,6 @@ export class UserController implements IUserController {
   async findOne(@Param('userId') userId: string): Promise<User> {
     return await this.usersService.findOne(userId);
   }
-
 
   @Roles(UserRoles.ADMIN)
   @Get()
@@ -107,7 +110,20 @@ export class UserController implements IUserController {
   ): Promise<void> {
     return this.usersService.addPermission(userId, permission);
   }
-
+  @Roles(UserRoles.ADMIN)
+  @Post(':userId/reports')
+  async createUserReport(
+    @Param('userId') userId: string,
+    @Body() createReportDto: CreateReportDTO,
+  ): Promise<Reports> {
+    const user = await this.usersService.findOne(userId);
+    const report = new Reports();
+    report.name = createReportDto.name;
+    report.url = createReportDto.url;
+    report.file_type = createReportDto.file_type;
+    report.user = user;
+    return this.reportService.createReport(report);
+  }
   @Roles(UserRoles.ADMIN)
   @Post('remove-permission/:userId')
   async removePermission(

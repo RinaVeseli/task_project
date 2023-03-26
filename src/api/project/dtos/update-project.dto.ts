@@ -8,14 +8,14 @@ export class UpdateProjectDto implements Partial<Project> {
   @IsString()
   @Column({ nullable: true })
   @ApiProperty()
-  url: string;
+  url?: string;
 
   @IsString()
   @Column({ nullable: true })
   @ApiProperty()
-  name: string;
+  name?: string;
 
   @IsEnum(Type)
   @ApiProperty()
-  type: Type;
+  type?: Type;
 }

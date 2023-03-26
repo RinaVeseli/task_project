@@ -13,6 +13,7 @@ import { UserRoles } from '../enums/roles.enum';
 import { AuditEntity } from '../../../common/db/customBaseEntites/AuditEntity';
 import { Project } from 'src/api/project/entities/project.entity';
 import { Reports } from 'src/api/reports/entities/report.entity';
+import { Task } from 'src/api/tasks/entities/task.entity';
 
 @Entity('users')
 export class User extends AuditEntity {
@@ -80,19 +81,9 @@ export class User extends AuditEntity {
   @OneToMany(() => Reports, (report) => report.user)
   reports: Reports[];
 
-  // @ManyToMany(
-  //   ()=>Project, project=>project.users,{onDelete:'NO ACTION', onUpdate:'NO ACTION'}
-  // )
-  //   @JoinTable({
-  //   name: 'user_project',
-  //   joinColumn: {
-  //     name: 'user_id',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'project_id',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
-  // projects?:Project[];
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
+
+  @ManyToMany(() => Project, (project) => project.users, { cascade: true })
+  projects: Project[];
 }

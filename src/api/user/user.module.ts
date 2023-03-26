@@ -6,8 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PasswordReset } from './entities/reset-password.entity';
 import { UserRepository } from './repository/user.repository';
 import { ReportRepository } from '../reports/repository/report.repository';
-import { ReportsService } from '../reports/services/reports.service';
-// import { UserProject } from './entities/user_project.entity';
 
 @Module({
   imports: [
@@ -17,7 +15,8 @@ import { ReportsService } from '../reports/services/reports.service';
     ]),
     TypeOrmModule.forFeature([PasswordReset]),
   ],
-  providers: [UserService, ReportsService],
+  providers: [UserService],
   controllers: [UserController],
+  exports: [UserService],
 })
 export class UserModule {}

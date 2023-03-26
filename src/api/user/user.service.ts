@@ -5,17 +5,20 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { IUserService } from './interfaces/user.service.interface';
 import { PermissinDto } from './dtos/permission.dto';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common/exceptions';
+import {
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common/exceptions';
 import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { PasswordReset } from './entities/reset-password.entity';
 import { hashDataBrypt } from '../../services/providers';
 import { randomBytes } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectEventEmitter } from 'nest-emitter';
 import EventEmitter from 'events';
 import { UserRepository } from './repository/user.repository';
-// import { UserProject } from './entities/user_project.entity';
+import axios from 'axios';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -24,25 +27,29 @@ export class UserService implements IUserService {
     @InjectRepository(PasswordReset)
     private passwordRepository: Repository<PasswordReset>,
     @InjectEventEmitter() private readonly emitter: EventEmitter,
-    // @InjectRepository(UserProject)
-    // private readonly studentCourseRepository: Repository<UserProject>
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return await this.userRepository.save(
-      this.userRepository.create(createUserDto),
-    );
+    const avatar = await this.generateImage(50, 50);
+    const data = { ...createUserDto, avatar };
+    return await this.userRepository.save(this.userRepository.create(data));
   }
-  // async createStudentCourse(createStudentCourse: {userId: number, projectId: number}): Promise<void> {
-  //   const student = await this.userRepository.findOne({where: {id: createStudentCourse.userId}});
-  //   if(!student){
-  //   throw new NotFoundException()
-  //   }
-    
-  //   await this.studentCourseRepository.save(createStudentCourse)
-  // }
+  async generateImage(width, height) {
+    const url = 'https://random.imagecdn.app/' + width + '/' + height;
+    try {
+      const response = await axios(url, { responseType: 'arraybuffer' });
+      const result = Buffer.from(response.data, 'binary').toString('base64');
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async findOne(userId: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ uuid: userId });
+    const user = await this.userRepository.findOne({
+      where: { uuid: userId },
+      relations: ['reports'],
+    });
     if (!user) {
       throw new UnprocessableEntityException('This user does not exist!');
     }
@@ -52,7 +59,12 @@ export class UserService implements IUserService {
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
-
+  async findUsersByIds(userIds: string[]): Promise<User[]> {
+    const users = this.userRepository.find({
+      where: { uuid: In(userIds) },
+    });
+    return users;
+  }
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(userId);
     await this.userRepository.update(user.id, updateUserDto);

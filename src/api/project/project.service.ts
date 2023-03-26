@@ -1,4 +1,5 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { UserService } from '../user/user.service';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './entities/project.entity';
@@ -7,7 +8,10 @@ import { ProjectRepository } from './repository/project.repository';
 
 @Injectable()
 export class ProjectService implements IProjectService {
-  constructor(private projectRepository: ProjectRepository) {}
+  constructor(
+    private projectRepository: ProjectRepository,
+    private readonly userService: UserService,
+  ) {}
 
   async findOne(projectId: string): Promise<Project> {
     return await this.projectRepository.getProjectById(projectId);
@@ -24,13 +28,29 @@ export class ProjectService implements IProjectService {
       updateProjectDto,
     );
   }
-  async addUserToProject(projectId: string, userId: string): Promise<void> {
-    return await this.projectRepository.addUserToProject(projectId, userId);
-  }
+
   async remove(projectId: string): Promise<void> {
     await this.projectRepository.removeProject(projectId);
   }
   async create(createProjectDto: CreateProjectDto): Promise<Project> {
     return await this.projectRepository.createProject(createProjectDto);
+  }
+  async assignUsersToProject(
+    projectId: string,
+    userId: string[],
+  ): Promise<Project> {
+    const project = await this.projectRepository.findOne({
+      where: {
+        uuid: projectId,
+      },
+      relations: ['users'],
+    });
+    if (!userId || userId.length === 0) {
+      return project;
+    }
+    const users = await this.userService.findUsersByIds(userId);
+    project.users = [...project.users, ...users];
+    await this.projectRepository.createProject(project);
+    return project;
   }
 }

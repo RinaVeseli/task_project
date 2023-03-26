@@ -31,6 +31,7 @@ import { Public } from '../../common/decorators/public.decorator';
 import { ReportsService } from '../reports/services/reports.service';
 import { CreateReportDTO } from '../reports/dtos/create_report.dto';
 import { Reports } from '../reports/entities/report.entity';
+import { Cron } from '@nestjs/schedule';
 // import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('user')
@@ -41,10 +42,7 @@ import { Reports } from '../reports/entities/report.entity';
 // @UseGuards(RolesGuard)
 @Public()
 export class UserController implements IUserController {
-  constructor(
-    private readonly usersService: UserService,
-    private readonly reportService: ReportsService,
-  ) {}
+  constructor(private readonly usersService: UserService) {}
 
   //example how permissions work
   // @Permission(UserPermissions.CAN_ACCESS_HELLO_METHOD)
@@ -110,20 +108,7 @@ export class UserController implements IUserController {
   ): Promise<void> {
     return this.usersService.addPermission(userId, permission);
   }
-  @Roles(UserRoles.ADMIN)
-  @Post(':userId/reports')
-  async createUserReport(
-    @Param('userId') userId: string,
-    @Body() createReportDto: CreateReportDTO,
-  ): Promise<Reports> {
-    const user = await this.usersService.findOne(userId);
-    const report = new Reports();
-    report.name = createReportDto.name;
-    report.url = createReportDto.url;
-    report.file_type = createReportDto.file_type;
-    report.user = user;
-    return this.reportService.createReport(report);
-  }
+
   @Roles(UserRoles.ADMIN)
   @Post('remove-permission/:userId')
   async removePermission(
@@ -133,6 +118,12 @@ export class UserController implements IUserController {
     return this.usersService.removePermission(userId, permission);
   }
 
+  @Public()
+  @Cron('1 * * * *')
+  @Get('generate/image')
+  async test() {
+    return await this.usersService.generateImage(140, 140);
+  }
   @Public()
   @Post('forgot')
   async forgotPassword(

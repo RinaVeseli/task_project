@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Reports } from 'src/api/reports/entities/report.entity';
+import { Task } from 'src/api/tasks/entities/task.entity';
 import { User } from 'src/api/user/entities/user.entity';
 import {
   Column,
@@ -30,10 +31,7 @@ export class Project extends AuditEntity {
 
   @OneToMany(() => Reports, (report) => report.projects)
   reports: Reports[];
-}
-// @ManyToMany(
-//   ()=>User, user=>user.projects,
-//   {onDelete: 'NO ACTION', onUpdate:'NO ACTION'},
 
-// )
-// users: User[];
+  @OneToMany(() => Task, (task) => task.projects)
+  tasks: Task[];
+}

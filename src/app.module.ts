@@ -22,6 +22,7 @@ import { Project } from './api/project/entities/project.entity';
 import { RoleModule } from './api/role/role.module';
 import { ReportsController } from './api/reports/controller/reports.controller';
 import { ReportsModule } from './api/reports/reports.module';
+import { TasksModule } from './api/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { ReportsModule } from './api/reports/reports.module';
     ProjectModule,
     RoleModule,
     ReportsModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

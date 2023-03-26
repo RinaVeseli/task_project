@@ -39,6 +39,28 @@ export class ReportsController {
   ): Promise<Reports> {
     return await this.reportService.createReport(createReportDto);
   }
+  @Post(':userId/reports')
+  async createReportWithUser(
+    @Param('userId') userId: string,
+    @Body() createReportDto: CreateReportDTO,
+  ): Promise<Reports> {
+    return this.reportService.createReportWithUser(userId, createReportDto);
+  }
+  @Post('/:reportId/:userId')
+  addUserToReport(
+    @Param('reportId') reportId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.reportService.addUserToReport(reportId, userId);
+  }
+
+  @Post('/add/:reportId/:projecId')
+  addProjectToReport(
+    @Param('reportId') reportId: string,
+    @Param('projecId') projectId: string,
+  ) {
+    return this.reportService.addProjectToReport(reportId, projectId);
+  }
 
   @Patch(':reportId')
   async updateReport(

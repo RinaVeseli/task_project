@@ -46,13 +46,13 @@ export class ProjectController implements IProjectController {
   async findAll(): Promise<Project[]> {
     return await this.projectService.findAll();
   }
-  @Public()
-  @Post(':id/users/:userId')
-  async addUserToProject(
-    @Param('id') projectId: string,
-    @Param('userId') userId: string,
-  ): Promise<void> {
-    return await this.projectService.addUserToProject(projectId, userId);
+
+  @Post(':projectId')
+  addUserToProject(
+    @Param('projectId') projectId: string,
+    @Body('userIds') userIds: string[],
+  ): Promise<Project> {
+    return this.projectService.assignUsersToProject(projectId, userIds);
   }
 
   @Patch(':projectId')
@@ -66,22 +66,4 @@ export class ProjectController implements IProjectController {
   async remove(@Param('projectId') projectId: string): Promise<void> {
     return await this.projectService.remove(projectId);
   }
-  // @Post(':projectId/users/:userId')
-  // async addUserToProject(
-  //   @Param('projectId') projectId: string,
-  //   @Param('userId') userId: string,
-  // ): Promise<Project> {
-  //   const project = await this.projectService.findOne(projectId);
-  //   const user = await this.userService.findOne(userId);
-
-  //   project.users.push(user);
-  //   await this.projectService.create(project);
-
-  //   return project;
-  // }
-  // @Get()
-
-  // async getUsers(){
-  //     return 'Hi user';
-  // }
 }

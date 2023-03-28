@@ -1,4 +1,8 @@
-import { UnprocessableEntityException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { BaseCustomRepository } from 'src/common/db/customBaseRepository/BaseCustomRepository';
 import { CustomRepository } from 'src/common/db/decorators/CustomRepository.decorator';
 import { CreateReportDTO } from '../dtos/create_report.dto';
@@ -23,11 +27,22 @@ export class ReportRepository
     return report;
   }
   async getAllReports(): Promise<Reports[]> {
-    return await this.find();
+    try {
+      return await this.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to retrieve reports');
+    }
   }
 
   async deleteReport(reportId: string): Promise<void> {
     const report = await this.findOneBy({ uuid: reportId });
-    await this.remove(report);
+    if (!report) {
+      throw new NotFoundException('Report not found');
+    }
+    try {
+      await this.remove(report);
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to delete report');
+    }
   }
 }

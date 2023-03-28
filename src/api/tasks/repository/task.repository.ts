@@ -1,4 +1,7 @@
-import { UnprocessableEntityException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { BaseCustomRepository } from 'src/common/db/customBaseRepository/BaseCustomRepository';
 import { CustomRepository } from 'src/common/db/decorators/CustomRepository.decorator';
 import { CreateTaskDto } from '../dtos/create-task.dto';
@@ -12,7 +15,11 @@ export class TaskRepository
   implements ITaskRepository
 {
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return await this.save(this.create(createTaskDto));
+    try {
+      return await this.save(this.create(createTaskDto));
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to create Task');
+    }
   }
   async getTaskById(taskId: string): Promise<Task> {
     const task = await this.findOne({
@@ -27,7 +34,11 @@ export class TaskRepository
     return task;
   }
   async getTasks(): Promise<Task[]> {
-    return await this.find();
+    try {
+      return await this.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to retrieve projects');
+    }
   }
   async updateTask(
     taskId: string,
@@ -42,6 +53,10 @@ export class TaskRepository
     if (!task) {
       throw new UnprocessableEntityException('This task does not exist!');
     }
-    await this.remove(task);
+    try {
+      await this.remove(task);
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to delete project');
+    }
   }
 }

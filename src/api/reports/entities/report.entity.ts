@@ -16,7 +16,7 @@ export class Reports extends AuditEntity {
     type: 'enum',
     nullable: false,
     enum: ReportTYPE,
-    default: ReportTYPE.OTHER,
+    default: ReportTYPE.PDF,
   })
   file_type: ReportTYPE;
 

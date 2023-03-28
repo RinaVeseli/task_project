@@ -4,7 +4,7 @@ import { ProjectModule } from '../project/project.module';
 import { UserModule } from '../user/user.module';
 import { TasksController } from './controller/tasks.controller';
 import { TaskRepository } from './repository/task.repository';
-import { ServicesService } from './services/services.service';
+import { ServicesService } from './services/task.service';
 
 @Module({
   imports: [

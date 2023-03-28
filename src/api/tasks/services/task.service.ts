@@ -13,7 +13,7 @@ import { ITaskService } from '../interface/task.service.interface';
 import { TaskRepository } from '../repository/task.repository';
 
 @Injectable()
-export class ServicesService implements ITaskService {
+export class TaskService implements ITaskService {
   constructor(
     private taskRepository: TaskRepository,
     private readonly userService: UserService,

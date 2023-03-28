@@ -28,25 +28,18 @@ import { UserRoles } from './enums/roles.enum';
 import { PaginationInterceptor } from '../../common/interceptors/pagination.interceptor';
 import { ForgotPasswordDto, ResetPasswordDto } from './dtos/password-reset.dto';
 import { Public } from '../../common/decorators/public.decorator';
-import { ReportsService } from '../reports/services/reports.service';
-import { CreateReportDTO } from '../reports/dtos/create_report.dto';
-import { Reports } from '../reports/entities/report.entity';
 import { Cron } from '@nestjs/schedule';
-// import { RolesGuard } from 'src/common/guards/roles.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('user')
 @ApiBearerAuth()
 @ApiTags('User')
 @UsePipes(new ValidationPipe())
 @UseInterceptors(ClassSerializerInterceptor)
-// @UseGuards(RolesGuard)
-@Public()
+@UseGuards(RolesGuard)
 export class UserController implements IUserController {
   constructor(private readonly usersService: UserService) {}
 
-  //example how permissions work
-  // @Permission(UserPermissions.CAN_ACCESS_HELLO_METHOD)
-  @Public()
   @Get('hello')
   async getHello() {
     return `Hello from Hello Method`;
@@ -63,7 +56,6 @@ export class UserController implements IUserController {
     return await this.usersService.findOne(user.uuid);
   }
 
-  // example how roles work
   @Roles(UserRoles.ADMIN)
   @Get(':userId')
   async findOne(@Param('userId') userId: string): Promise<User> {
@@ -124,7 +116,6 @@ export class UserController implements IUserController {
   async test() {
     return await this.usersService.generateImage(140, 140);
   }
-  @Public()
   @Post('forgot')
   async forgotPassword(
     @Body() forgotPassword: ForgotPasswordDto,
@@ -132,7 +123,6 @@ export class UserController implements IUserController {
     return await this.usersService.forgotPassword(forgotPassword);
   }
 
-  @Public()
   @Post('reset/:token')
   async resetPassword(
     @Param('token') token: string,

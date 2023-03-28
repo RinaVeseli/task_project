@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProjectService } from 'src/api/project/project.service';
 import { UserService } from 'src/api/user/user.service';
 import { CreateReportDTO } from '../dtos/create_report.dto';
@@ -7,7 +11,7 @@ import { Reports } from '../entities/report.entity';
 import { ReportRepository } from '../repository/report.repository';
 import * as PDFDocument from 'pdfkit';
 import { Response } from 'express';
-
+import * as ExcelJS from 'exceljs';
 @Injectable()
 export class ReportsService {
   constructor(
@@ -91,6 +95,16 @@ export class ReportsService {
     return this.reportRepository.save(report);
   }
 
+  async generateFile(report: Reports, response: Response): Promise<void> {
+    if (report.file_type === 'pdf') {
+      return this.generatePDF(report, response);
+    } else if (report.file_type === 'excel') {
+      return this.generateExcel(report, response);
+    } else {
+      throw new BadRequestException('Invalid report type');
+    }
+  }
+
   async generatePDF(report: Reports, response: Response): Promise<void> {
     const doc = new PDFDocument();
     doc.pipe(response);
@@ -100,5 +114,29 @@ export class ReportsService {
     doc.fontSize(12).text(`Url: ${report.url}`);
 
     doc.end();
+  }
+  async generateExcel(report: Reports, response: Response): Promise<void> {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Report');
+
+    worksheet.addRow(['Report ID', 'Name', 'URL']);
+
+    worksheet.addRow([report.id, report.name, report.url]);
+
+    worksheet.getColumn(1).width = 15;
+    worksheet.getColumn(2).width = 25;
+    worksheet.getColumn(3).width = 50;
+
+    response.setHeader(
+      'Content-Disposition',
+      'attachment; filename="report.xlsx"',
+    );
+    response.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+
+    await workbook.xlsx.write(response);
+    response.end();
   }
 }

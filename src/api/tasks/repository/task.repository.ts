@@ -15,7 +15,12 @@ export class TaskRepository
     return await this.save(this.create(createTaskDto));
   }
   async getTaskById(taskId: string): Promise<Task> {
-    const task = await this.findOneBy({ uuid: taskId });
+    const task = await this.findOne({
+      where: {
+        uuid: taskId,
+      },
+      relations: ['users', 'projects'],
+    });
     if (!task) {
       throw new UnprocessableEntityException('This task does not exist!');
     }

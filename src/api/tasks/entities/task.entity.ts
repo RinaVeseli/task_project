@@ -26,8 +26,8 @@ export class Task extends AuditEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'date' })
-  deadline: string;
+  @Column({ type: 'date', nullable: true })
+  deadline: Date;
 
   @Column({
     type: 'enum',
@@ -37,8 +37,9 @@ export class Task extends AuditEntity {
   })
   status: Status;
 
-  @ManyToOne(() => User, (user) => user.tasks)
-  user: User;
+  @ManyToMany(() => User, (user) => user.tasks)
+  @JoinTable()
+  users: User[];
 
   @ManyToOne(() => Project, (project) => project.tasks)
   projects: Project;

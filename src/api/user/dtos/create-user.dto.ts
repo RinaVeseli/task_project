@@ -20,7 +20,6 @@ export class CreateUserDto {
   @ApiProperty()
   firstName: string;
 
-  
   @IsString()
   @ApiProperty()
   middle_name: string;
@@ -53,17 +52,16 @@ export class CreateUserDto {
   @ApiProperty()
   timezone: string;
 
-  
   @IsBoolean()
   @IsOptional()
   @ApiProperty()
   isVerified: boolean;
 
- @IsDate()
+  @IsDate()
   @IsOptional()
   @ApiProperty()
   birthdate: Date;
-  
+
   @IsBoolean()
   @IsOptional()
   @ApiProperty()
@@ -73,25 +71,8 @@ export class CreateUserDto {
   @IsOptional()
   @ApiProperty()
   avatar: string;
- 
 
   @IsEnum(UserRoles)
   @ApiProperty()
   role: number;
-
-  // @ManyToMany(
-  //   ()=>Project, project=>project.users,{onDelete:'NO ACTION', onUpdate:'NO ACTION'}
-  // )
-  //   @JoinTable({
-  //   name: 'user_project',
-  //   joinColumn: {
-  //     name: 'user_id',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'project_id',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
-  // projects?:Project[]; 
 }

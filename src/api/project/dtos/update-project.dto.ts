@@ -18,4 +18,7 @@ export class UpdateProjectDto implements Partial<Project> {
   @IsEnum(Type)
   @ApiProperty()
   type?: Type;
+
+  @ApiProperty({ type: [String] })
+  userId?: string[];
 }

@@ -22,6 +22,9 @@ import axios from 'axios';
 
 @Injectable()
 export class UserService implements IUserService {
+  findOneBy(arg0: { uuid: number; }): User | PromiseLike<User> {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private userRepository: UserRepository,
     @InjectRepository(PasswordReset)
@@ -48,7 +51,7 @@ export class UserService implements IUserService {
   async findOne(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { uuid: userId },
-      relations: ['reports'],
+      relations: ['reports', 'tasks'],
     });
     if (!user) {
       throw new UnprocessableEntityException('This user does not exist!');

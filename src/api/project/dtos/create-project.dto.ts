@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { User } from 'src/api/user/entities/user.entity';
+import { Project } from '../entities/project.entity';
 import { Type } from '../enums/type.enum';
 
-export class CreateProjectDto {
+export class CreateProjectDto implements Partial<Project> {
   @IsString()
   @ApiProperty()
   url: string;
@@ -16,6 +17,7 @@ export class CreateProjectDto {
   @ApiProperty()
   type: Type;
 
-  //   @IsOptional()
-  //   users?: User[];
+  // @ArrayNotEmpty()
+  @ApiProperty({ type: [String] })
+  userId?: string[];
 }

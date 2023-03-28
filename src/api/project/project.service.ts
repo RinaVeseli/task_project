@@ -1,5 +1,11 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
+import { AddUsersDto } from './dtos/addUser.dto';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './entities/project.entity';
@@ -19,38 +25,75 @@ export class ProjectService implements IProjectService {
   async findAll(): Promise<Project[]> {
     return await this.projectRepository.getProjects();
   }
+
+  async create(createProjectDto: CreateProjectDto): Promise<Project> {
+    const project = await this.projectRepository.createProject(
+      createProjectDto,
+    );
+    const users = await this.userService.findUsersByIds(
+      createProjectDto.userId,
+    );
+    if (!users || users.length === 0) {
+      throw new BadRequestException('User IDs cannot be empty');
+    }
+    project.users = users;
+    return this.projectRepository.save(project);
+  }
   async update(
-    projectId: string,
+    id: string,
     updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
-    return await this.projectRepository.updateProject(
-      projectId,
-      updateProjectDto,
-    );
-  }
+    const project = await this.projectRepository.findOne({
+      where: {
+        uuid: id,
+      },
+      relations: ['users'],
+    });
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
 
-  async remove(projectId: string): Promise<void> {
-    await this.projectRepository.removeProject(projectId);
+    if (updateProjectDto.name) {
+      project.name = updateProjectDto.name;
+    }
+    if (updateProjectDto.type) {
+      project.type = updateProjectDto.type;
+    }
+    if (updateProjectDto.userId) {
+      const users = await this.userService.findUsersByIds(
+        updateProjectDto.userId,
+      );
+      if (!users || users.length === 0) {
+        throw new BadRequestException('User IDs cannot be empty');
+      }
+      project.users = users;
+    }
+
+    return this.projectRepository.save(project);
   }
-  async create(createProjectDto: CreateProjectDto): Promise<Project> {
-    return await this.projectRepository.createProject(createProjectDto);
-  }
-  async assignUsersToProject(
-    projectId: string,
-    userId: string[],
-  ): Promise<Project> {
+  async addUsers(projectId: string, addUserDto: AddUsersDto): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: {
         uuid: projectId,
       },
       relations: ['users'],
     });
-    if (!userId || userId.length === 0) {
-      return project;
+    if (!project) {
+      throw new NotFoundException('Project not found');
     }
-    const users = await this.userService.findUsersByIds(userId);
-    project.users = [...project.users, ...users];
-    await this.projectRepository.createProject(project);
-    return project;
+    const users = await this.userService.findUsersByIds(addUserDto.userIds);
+    if (!users || users.length === 0) {
+      throw new BadRequestException('User IDs not found');
+    }
+    project.users = project.users || [];
+    users.forEach((user) => {
+      if (!project.users.some((u) => u.id === user.id)) {
+        project.users.push(user);
+      }
+    });
+    return this.projectRepository.save(project);
+  }
+  async remove(projectId: string): Promise<void> {
+    await this.projectRepository.removeProject(projectId);
   }
 }

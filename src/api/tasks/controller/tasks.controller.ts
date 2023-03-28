@@ -13,13 +13,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AddUsersDto } from '../dtos/adduser.dto';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { Task } from '../entities/task.entity';
 import { ITaskController } from '../interface/task.controller.interface';
 import { ServicesService } from '../services/services.service';
 
-@Controller('tasks')
+@Controller('Tasks')
 @ApiBearerAuth()
 @ApiTags('Tasks')
 @Injectable()
@@ -53,19 +54,11 @@ export class TasksController implements ITaskController {
   async remove(@Param('taskId') taskId: string): Promise<void> {
     return await this.taskService.remove(taskId);
   }
-  @Post('/:taskId/:userId')
-  addUserToTask(
+  @Post(':taskId/users')
+  async addUsers(
     @Param('taskId') taskId: string,
-    @Param('userId') userId: string,
-  ) {
-    return this.taskService.addUserToTask(taskId, userId);
-  }
-
-  @Post('/add/:taskId/:projecId')
-  addProjectToTask(
-    @Param('taskId') taskId: string,
-    @Param('projecId') projectId: string,
-  ) {
-    return this.taskService.addProjectToTask(taskId, projectId);
+    @Body() addUserDto: AddUsersDto,
+  ): Promise<Task> {
+    return this.taskService.addUsers(taskId, addUserDto);
   }
 }

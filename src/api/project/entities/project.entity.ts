@@ -25,7 +25,7 @@ export class Project extends AuditEntity {
   @Column({ type: 'enum', nullable: false, enum: Type, default: Type.OTHER })
   type: Type;
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, (user) => user.projects)
   @JoinTable()
   users: User[];
 

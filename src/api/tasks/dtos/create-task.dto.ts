@@ -8,8 +8,9 @@ import {
 } from 'class-validator';
 import { Type } from '../enums/type.enum';
 import { Status } from '../enums/status.enum';
+import { Task } from '../entities/task.entity';
 
-export class CreateTaskDto {
+export class CreateTaskDto implements Partial<Task> {
   @IsEnum(Type)
   @ApiProperty()
   type: Type;
@@ -22,11 +23,13 @@ export class CreateTaskDto {
   @ApiProperty()
   description: string;
 
-  @IsString()
   @ApiProperty()
-  deadline: string;
+  deadline: Date;
 
   @IsEnum(Status)
   @ApiProperty()
   status: Status;
+
+  @ApiProperty()
+  projectId?: string;
 }

@@ -18,11 +18,13 @@ export class UpdateTaskDto implements Partial<Task> {
   @ApiProperty()
   description: string;
 
-  @IsString()
   @ApiProperty()
-  deadline: string;
+  deadline: Date;
 
   @IsEnum(Status)
   @ApiProperty()
   status: Status;
+
+  @ApiProperty()
+  projectId?: string;
 }

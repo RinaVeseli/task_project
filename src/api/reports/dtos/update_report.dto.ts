@@ -12,4 +12,8 @@ export class UpdateReportDTO {
   @IsEnum(ReportTYPE)
   @ApiProperty()
   file_type: ReportTYPE;
+
+  @IsString()
+  @ApiProperty()
+  projectId?: string;
 }

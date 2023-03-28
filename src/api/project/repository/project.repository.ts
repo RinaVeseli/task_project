@@ -17,20 +17,25 @@ export class ProjectRepository
   }
 
   async getProjectById(projectId: string): Promise<Project> {
-    const project = await this.findOneBy({ uuid: projectId });
+    const project = await this.findOne({
+      where: {
+        uuid: projectId,
+      },
+      relations: ['users'],
+    });
     if (!project) {
       throw new UnprocessableEntityException('This project does not exist!');
     }
     return project;
   }
 
-  async updateProject(
-    projectId: string,
-    updateProjectDto: UpdateProjectDto,
-  ): Promise<Project> {
+  async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
+    return await this.save(this.create(createProjectDto));
+  }
+
+  async removeProject(projectId: string): Promise<void> {
     const project = await this.findOneBy({ uuid: projectId });
-    await this.update(project.id, updateProjectDto);
-    return await this.findOneBy({ uuid: projectId });
+    await this.remove(project);
   }
 
   async addUserToProject(projectId: string, userId: string): Promise<void> {
@@ -39,13 +44,5 @@ export class ProjectRepository
 
     project.users = [user];
     await this.save(project);
-  }
-  async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
-    return await this.save(this.create(createProjectDto));
-  }
-
-  async removeProject(projectId: string): Promise<void> {
-    const project = await this.findOneBy({ uuid: projectId });
-    await this.remove(project);
   }
 }

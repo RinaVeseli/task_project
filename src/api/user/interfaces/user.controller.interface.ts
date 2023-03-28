@@ -15,14 +15,9 @@ export interface IUserController {
 
   create(createUserDto: CreateUserDto): Promise<User>;
 
- 
-  
-
   getMe(user: User): Promise<User>;
 
   findOne(userId: string): Promise<User>;
-
-
 
   findAll(): Promise<User[]>;
 

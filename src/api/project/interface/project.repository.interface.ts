@@ -11,10 +11,5 @@ export interface IProjectRepository extends IBaseCustomRepository<Project> {
 
   getProjects(): Promise<Project[]>;
 
-  updateProject(
-    projectId: string,
-    updateProjectDto: UpdateProjectDto,
-  ): Promise<Project>;
-
   removeProject(projectId: string): Promise<void>;
 }

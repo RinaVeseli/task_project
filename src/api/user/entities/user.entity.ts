@@ -81,9 +81,9 @@ export class User extends AuditEntity {
   @OneToMany(() => Reports, (report) => report.user)
   reports: Reports[];
 
-  @OneToMany(() => Task, (task) => task.user)
+  @ManyToMany(() => Task, (task) => task.users)
   tasks: Task[];
 
-  @ManyToMany(() => Project, (project) => project.users, { cascade: true })
+  @ManyToMany(() => Project, (project) => project.users)
   projects: Project[];
 }

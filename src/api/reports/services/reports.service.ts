@@ -1,11 +1,12 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectService } from 'src/api/project/project.service';
-import { UserRepository } from 'src/api/user/repository/user.repository';
 import { UserService } from 'src/api/user/user.service';
 import { CreateReportDTO } from '../dtos/create_report.dto';
 import { UpdateReportDTO } from '../dtos/update_report.dto';
 import { Reports } from '../entities/report.entity';
 import { ReportRepository } from '../repository/report.repository';
+import * as PDFDocument from 'pdfkit';
+import { Response } from 'express';
 
 @Injectable()
 export class ReportsService {
@@ -14,56 +15,36 @@ export class ReportsService {
     private readonly userService: UserService,
     private readonly projectService: ProjectService,
   ) {}
-  async createReport(createReportDto: CreateReportDTO): Promise<Reports> {
-    return await this.reportRepository.createReport(createReportDto);
-  }
+
   async createReportWithUser(
     userId: string,
     createReportDto: CreateReportDTO,
   ): Promise<Reports> {
     const user = await this.userService.findOne(userId);
     if (!user) {
-      throw new UnprocessableEntityException('User not found');
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
     const report = new Reports();
     report.name = createReportDto.name;
-    report.file_type = createReportDto.file_type;
     report.url = createReportDto.url;
+    report.file_type = createReportDto.file_type;
+
+    if (createReportDto.projectId) {
+      const project = await this.projectService.findOne(
+        createReportDto.projectId,
+      );
+      if (!project) {
+        throw new NotFoundException(
+          `Project with ID ${createReportDto.projectId} not found`,
+        );
+      }
+      report.projects = project;
+    }
+
     report.user = user;
+
     return this.reportRepository.save(report);
-  }
-
-  async addUserToReport(reportId: string, userId: string): Promise<Reports> {
-    const user = await this.userService.findOne(userId);
-    const report = await this.reportRepository.findOne({
-      where: {
-        uuid: reportId,
-      },
-      relations: ['user'],
-    });
-    report.user = user;
-
-    await this.reportRepository.save(report);
-
-    return report;
-  }
-  async addProjectToReport(
-    reportId: string,
-    projectId: string,
-  ): Promise<Reports> {
-    const project = await this.projectService.findOne(projectId);
-    const report = await this.reportRepository.findOne({
-      where: {
-        uuid: reportId,
-      },
-      relations: ['projects'],
-    });
-    report.projects = project;
-
-    await this.reportRepository.save(report);
-
-    return report;
   }
 
   async getAll(): Promise<Reports[]> {
@@ -80,6 +61,44 @@ export class ReportsService {
     reportId: string,
     updateReportDto: UpdateReportDTO,
   ): Promise<Reports> {
-    return await this.reportRepository.updateReport(reportId, updateReportDto);
+    const report = await this.reportRepository.findOne({
+      where: {
+        uuid: reportId,
+      },
+      relations: ['projects'],
+    });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${reportId} not found`);
+    }
+
+    report.name = updateReportDto.name || report.name;
+    report.url = updateReportDto.url || report.url;
+    report.file_type = updateReportDto.file_type || report.file_type;
+
+    if (updateReportDto.projectId) {
+      const project = await this.projectService.findOne(
+        updateReportDto.projectId,
+      );
+      if (!project) {
+        throw new NotFoundException(
+          `Project with ID ${updateReportDto.projectId} not found`,
+        );
+      }
+      report.projects = project;
+    }
+
+    return this.reportRepository.save(report);
+  }
+
+  async generatePDF(report: Reports, response: Response): Promise<void> {
+    const doc = new PDFDocument();
+    doc.pipe(response);
+
+    doc.fontSize(18).text(`Report ID: ${report.id}`);
+    doc.fontSize(12).text(`Name: ${report.name}`);
+    doc.fontSize(12).text(`Url: ${report.url}`);
+
+    doc.end();
   }
 }

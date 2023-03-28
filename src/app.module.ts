@@ -23,6 +23,8 @@ import { RoleModule } from './api/role/role.module';
 import { ReportsController } from './api/reports/controller/reports.controller';
 import { ReportsModule } from './api/reports/reports.module';
 import { TasksModule } from './api/tasks/tasks.module';
+import { MediaModule } from './api/media/media.module';
+import { SettingsModule } from './api/settings/settings.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { TasksModule } from './api/tasks/tasks.module';
     RoleModule,
     ReportsModule,
     TasksModule,
+    MediaModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [

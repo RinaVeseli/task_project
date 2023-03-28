@@ -14,6 +14,7 @@ import { AuditEntity } from '../../../common/db/customBaseEntites/AuditEntity';
 import { Project } from 'src/api/project/entities/project.entity';
 import { Reports } from 'src/api/reports/entities/report.entity';
 import { Task } from 'src/api/tasks/entities/task.entity';
+import { Media } from 'src/api/media/entities/media.entity';
 
 @Entity('users')
 export class User extends AuditEntity {
@@ -86,4 +87,7 @@ export class User extends AuditEntity {
 
   @ManyToMany(() => Project, (project) => project.users)
   projects: Project[];
+
+  @OneToMany(() => Media, (media) => media.user)
+  medias: Media[];
 }

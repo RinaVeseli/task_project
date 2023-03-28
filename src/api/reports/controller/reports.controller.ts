@@ -44,8 +44,8 @@ export class ReportsController {
   }
 
   @Public()
-  @Get('/pdf/:reportId')
-  async getReportWithPDF(
+  @Get('/file/:reportId')
+  async getReportWithFile(
     @Param('reportId') reportId: string,
     @Res() res: Response,
   ) {

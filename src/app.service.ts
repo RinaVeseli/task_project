@@ -15,8 +15,6 @@ export class AppService implements OnModuleInit {
     private readonly mailService: MailService,
   ) {}
 
-
-
   @Public()
   getHello(): string {
     return 'Hello World!';

@@ -23,7 +23,7 @@ import { CreateTaskDto } from '../dtos/create-task.dto';
 import { UpdateTaskDto } from '../dtos/update-task.dto';
 import { Task } from '../entities/task.entity';
 import { ITaskController } from '../interface/task.controller.interface';
-import { ServicesService } from '../services/task.service';
+import { TaskService } from '../services/task.service';
 
 @Controller('Tasks')
 @ApiBearerAuth()
@@ -31,7 +31,7 @@ import { ServicesService } from '../services/task.service';
 @Injectable()
 @UseGuards(RolesGuard)
 export class TasksController implements ITaskController {
-  constructor(private readonly taskService: ServicesService) {}
+  constructor(private readonly taskService: TaskService) {}
 
   @Post()
   async create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {

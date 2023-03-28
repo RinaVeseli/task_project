@@ -22,9 +22,6 @@ import axios from 'axios';
 
 @Injectable()
 export class UserService implements IUserService {
-  findOneBy(arg0: { uuid: number; }): User | PromiseLike<User> {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     private userRepository: UserRepository,
     @InjectRepository(PasswordReset)

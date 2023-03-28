@@ -6,9 +6,11 @@ export class UpdateReportDTO {
   @IsString()
   @ApiProperty()
   name: string;
+
   @IsString()
   @ApiProperty()
   url: string;
+
   @IsEnum(ReportTYPE)
   @ApiProperty()
   file_type: ReportTYPE;

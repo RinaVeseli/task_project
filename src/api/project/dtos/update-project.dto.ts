@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsString, Validate } from 'class-validator';
+import { IsUnique } from 'src/common/decorators/validation.decorator';
 import { Column } from 'typeorm';
 import { Project } from '../entities/project.entity';
 import { Type } from '../enums/type.enum';
 
 export class UpdateProjectDto implements Partial<Project> {
   @IsString()
-  @Column({ nullable: true })
   @ApiProperty()
   url?: string;
 
   @IsString()
-  @Column({ nullable: true })
+  @Validate(IsUnique, [Project])
   @ApiProperty()
   name?: string;
 
